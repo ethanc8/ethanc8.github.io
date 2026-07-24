@@ -1,4 +1,4 @@
-# The Gao Log
+# Ethan C's website
 
 My personal blog site.
 

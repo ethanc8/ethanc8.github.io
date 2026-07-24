@@ -1,6 +1,8 @@
-#let jeremy-gao = "Jeremy Gao"
+#let authors = (
+  ethanc8: "Ethan C"
+)
 
-#let html-renderer(c, page-key: none, ..args) = {
+#let html-renderer(doc, page-key: none, ..args) = {
   let page-key = if page-key == none { args.title } else { page-key }
   let footnote-tracker = state("__footnote-tracker-" + page-key, ())
   show footnote: it => context {
@@ -40,18 +42,18 @@
       html.address(class: "author", args.author)
       html.time(
         datetime: args.created,
-        args.created.display("[month repr:short]. [day], [year]"),
+        args.created.display("[year] [month repr:short] [day]"),
       )
     })
   })
-  html.style(
-    ```css
-      .end::before {
-        content: " ✿";
-      }
-    ```.text,
-  )
-  c
+  // html.style(
+  //   ```css
+  //     .end::before {
+  //       content: " ✿";
+  //     }
+  //   ```.text,
+  // )
+  doc
   html.span(class: "end")
   // now back to footnotes
   context {
@@ -82,17 +84,17 @@
   }
 }
 
-#let pdf-renderer(c, page-key: none, ..args) = { c }
+#let pdf-renderer(doc, page-key: none, ..args) = { doc }
 
 #let wstemplate(
-  c,
+  doc,
   html-renderer: html-renderer,
   pdf-renderer: pdf-renderer,
   ..args,
 ) = metadata((
   html-renderer: html-renderer.with(..args),
   ..args.named(),
-  content: c,
+  content: doc,
 ))
 
 #let elink(..args) = link(..args)
@@ -128,3 +130,10 @@
   )[e]
   X
 ]
+
+#let tagset = (
+  transit: "Transit",
+  septa: "SEPTA",
+  integraler-taktfahrplan: "Integraler Taktfahrplan",
+  vuchic: "Vuchic",
+)

@@ -47,7 +47,7 @@
         cbor.encode((
           preflight: (
             full: (
-              font_family_sans: "Nunito",
+              font_family_sans: "Noto Sans",
             ),
           ),
         )),
@@ -55,7 +55,7 @@
   ) <styles>
 ]
 
-#let basic(c, page-title: none) = {
+#let basic-internal(doc, page-title: none) = {
   import html: *
   html(lang: "en", {
     head({
@@ -63,7 +63,7 @@
       meta(name: "viewport", content: "width=device-width, initial-scale=1")
       realize(<styles>, href => link(rel: "stylesheet", href: href))
       style(
-        "@import url('https://fonts.googleapis.com/css2?family=Libertinus+Serif+Display&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');",
+        "@import url('https://fonts.googleapis.com/css2?family=Libertinus+Serif+Display&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');",
       )
       elem("script", attrs: (
         defer: "",
@@ -95,22 +95,30 @@
           "px-5",
           "my-20",
         ),
-        c,
+        [
+          #doc
+        ]
       )
     })
   })
 }
 
+#let basic(doc, page-title: none) = basic-internal([
+  #link(<index>)[#title[Ethan C's website]]
+  #let urls = (
+    (<about>, [About]),
+    (<atom>, [Subscribe to my blog (atom.xml)]),
+  )
+  #for url in urls [
+    #par(link(url.at(0), url.at(1)))
+  ]
+  #divider()
+  #doc
+], page-title: page-title)
+
 #let posts = (
   (
-    "src/posts/typst-transition.typ",
-    "src/posts/paiagram-0.typ",
-    "src/posts/2025-summary.typ",
-    "src/posts/typst-animations.typ",
-    "src/posts/building-websites-with-just-typst.typ",
-    "src/posts/css-selector-highlights.typ",
-    "src/posts/bad-typple.typ",
-    "src/posts/typtex.typ",
+    "src/posts/papers-vukan-vuchic.typ",
   )
     .map(path => (include path, path))
     .map(((content, path)) => (
@@ -136,29 +144,29 @@
 
 #let format-link(post) = link(post.label, {
   post.title
-  html.span(class: "ml-auto", post.created.display("[month repr:short]. [day], [year]"))
+  html.span(class: "ml-auto", post.created.display("[year] [month repr:short] [day]"))
 })
 
-#document(
-  "connections.html",
-  basic(page-title: [Connections], {
-    let connections = toml("connections.toml").connections
-    title[Connections]
-    for ent in connections {
-      html.div(html.a(
-        class: "mb-5 block no-underline hover:shadow-[0_0.25rem_0_0_gray] transition-shadow",
-        href: ent.link,
-        {
-          heading(level: 2, ent.title)
-          ent.description
-        },
-      ))
-    }
-  }),
-) <connections>
+// #document(
+//   "connections.html",
+//   basic(page-title: [Connections], {
+//     let connections = toml("connections.toml").connections
+//     title[Connections]
+//     for ent in connections {
+//       html.div(html.a(
+//         class: "mb-5 block no-underline hover:shadow-[0_0.25rem_0_0_gray] transition-shadow",
+//         href: ent.link,
+//         {
+//           heading(level: 2, ent.title)
+//           ent.description
+//         },
+//       ))
+//     }
+//   }),
+// ) <connections>
 
 #document("about.html", basic(
-  page-title: [Connections],
+  page-title: [About],
   include "about.typ",
 )) <about>
 
@@ -167,16 +175,7 @@
 
 #document(
   "index.html",
-  basic(page-title: [The Gao Log])[
-    #title[The Gao Log]
-    #let urls = (
-      ("https://wensimehrp.github.io/tfvindex", [TFVIndex Icon Site]),
-      ("https://paiagram.com", [Paiagram]),
-      ("https://wensimehrp.github.io/haita/", [Haita Documentation Framework]),
-      (<connections>, [Connections]),
-      (<about>, [About]),
-      (<atom>, [Subscribe to my blog (atom.xml)]),
-    )
+  basic(page-title: [Ethan C's website])[
     // update page-abs-links for generating RSS
     #for post in posts {
       show html.elem.where(tag: "a"): a => page-abs-links.update(links => links + ((a.attrs.href): post))
@@ -185,10 +184,6 @@
     #html.div(
       class: "[&_a]:flex [&_a]:no-underline [&_a]:hover:shadow-[0_0.25rem_0_0_gray] [&_a]:transition-shadow",
       {
-        for url in urls {
-          par(link(..url))
-        }
-        divider()
         [= Posts]
         for (idx, post) in posts.enumerate() {
           // this wraps to the last post for the very first post
@@ -201,6 +196,6 @@
       },
     )
   ],
-)
+) <index>
 
 #include "atom.typ"

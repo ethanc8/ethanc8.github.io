@@ -37,7 +37,7 @@
   #asset("atom.xml", {
     let posts = state("__page-abs-links").final().pairs().map(make-post)
     atom-encode(
-      title: "The Gao Log",
+      title: "Ethan C's website",
       subtitle: "Gather and Observe",
       site-link: "https://wensimehrp.github.io",
       id: atom-site-id(
